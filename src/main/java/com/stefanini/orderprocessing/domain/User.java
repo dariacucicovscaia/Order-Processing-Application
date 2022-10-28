@@ -3,6 +3,7 @@ package com.stefanini.orderprocessing.domain;
 
 public class User {
     private int id;
+    private String name;
     private String address;
     private String email;
     private boolean paymentDone;
@@ -10,7 +11,8 @@ public class User {
     public User() {
     }
 
-    public User(String address, String email, boolean paymentDone) {
+    public User(String name,String address, String email, boolean paymentDone) {
+        this.name = name;
         this.address = address;
         this.email = email;
         this.paymentDone = paymentDone;
@@ -54,5 +56,11 @@ public class User {
     public void setPaymentDone(boolean paymentDone) {
         this.paymentDone = paymentDone;
     }
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }
