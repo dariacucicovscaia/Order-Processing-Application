@@ -21,6 +21,10 @@ public class UserController {
     public List<User> getUsers(){
         return userService.getAllUsers();
     }
+    @GetMapping("/myOrders/{userId}")
+    public List<Order> getAllUserOrders(@PathVariable int userId){
+        return userService.getAllUserOrders(userId);
+    }
 
     @PostMapping("/placeOrder/{userId}")
     public Order placeOrder(@PathVariable int userId, @RequestBody Order order){

@@ -39,13 +39,17 @@ public class UserServiceImpl implements UserService {
 
         emailSenderService.sendMail(email, subject);
 
-        order.setUser(userDAO.getById(userId));
+        order.setUserId(userId);
         return orderDAO.create(order);
     }
 
     @Override
     public User createUser(User user) {
-
         return userDAO.create(user);
+    }
+
+    @Override
+    public List<Order> getAllUserOrders(int id) {
+        return userDAO.getUsersOrders(id);
     }
 }

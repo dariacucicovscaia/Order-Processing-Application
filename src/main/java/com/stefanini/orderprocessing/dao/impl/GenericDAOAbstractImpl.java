@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
-    private final JdbcTemplate jdbcTemplate;
+    protected final JdbcTemplate jdbcTemplate;
     private final Environment environment;
     private Class<T> entityClazz;
 

@@ -8,6 +8,6 @@ public interface OrderService {
     Order placeOrder(Order order);
     int deleteOrder(int id);
     Order getOrderById(int id);
-    Order updateOrderStatus(Order order, int id);
+    Order updateOrderStatus(int orderId, String newStatus);
 
 }

@@ -11,4 +11,6 @@ public interface UserService {
     Order placeOrder(int userId, Order order);
 
     User createUser(User user);
+
+    List<Order> getAllUserOrders(int id);
 }

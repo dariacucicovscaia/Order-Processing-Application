@@ -38,8 +38,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order updateOrderStatus(Order order, int id) {
-        return orderDAO.update(order, id);
+    public Order updateOrderStatus(int orderId, String newStatus) {
+        Order order = getOrderById(orderId);
+        order.setStatus(newStatus);
+
+        return orderDAO.update(order ,orderId);
     }
 
 

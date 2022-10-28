@@ -21,13 +21,8 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
-    @PostMapping("/placeOrder")
-    public String placeOrder( @RequestBody Order order){
-        return orderService.placeOrder(order).toString();
-    }
-
     @DeleteMapping("/{id}")
-    public int placeOrder( @PathVariable int id){
+    public int deleteOrder( @PathVariable int id){
         return orderService.deleteOrder(id);
     }
 
@@ -36,8 +31,9 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
-    @PutMapping ("/{id}")
-    public Order updateOrder(@RequestBody Order order, @PathVariable int id){
-        return orderService.updateOrderStatus(order, id);
+
+    @PutMapping ("/{orderId}/{newStatus}")
+    public Order changeOrderStatus(@PathVariable int orderId, @PathVariable String newStatus){
+        return orderService.updateOrderStatus( orderId,newStatus);
     }
 }

@@ -28,7 +28,6 @@ public class MailSenderService {
         message.setText(email);
         message.setSubject(subject);
 
-
         mailSender.send(message);
     }
 
@@ -38,7 +37,6 @@ public class MailSenderService {
         message.setTo(environment.getProperty("spring.mail.username"));
         message.setText(email);
         message.setSubject(subject);
-
 
         mailSender.send(message);
     }

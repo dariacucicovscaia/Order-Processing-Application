@@ -33,11 +33,11 @@ public class Order {
         this.status = status;
     }
 
-    public int getUser() {
+    public int getUserId() {
         return userId;
     }
-    public void setUser(User user) {
-        this.userId = user.getId();
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public OrderType getType() {
