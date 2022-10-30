@@ -9,5 +9,5 @@ public interface OrderService {
     int deleteOrder(int id);
     Order getOrderById(int id);
     Order updateOrderStatus(int orderId, String newStatus);
-
+    Order payOrder(int orderId);
 }

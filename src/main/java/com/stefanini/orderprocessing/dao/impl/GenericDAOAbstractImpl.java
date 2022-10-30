@@ -1,6 +1,7 @@
 package com.stefanini.orderprocessing.dao.impl;
 
 import com.stefanini.orderprocessing.dao.IGenericDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,18 +11,23 @@ import java.util.List;
 
 public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
     protected final JdbcTemplate jdbcTemplate;
-    private final Environment environment;
+
     private Class<T> entityClazz;
 
+    private Environment environment;
+
+    @Autowired
+    public final void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 
     public void setClazz(final Class<T> clazzToSet) {
         entityClazz = clazzToSet;
     }
 
 
-    public GenericDAOAbstractImpl(JdbcTemplate jdbcTemplate, Environment environment) {
+    public GenericDAOAbstractImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.environment = environment;
     }
 
 
@@ -51,7 +57,6 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         }
         resultToBeUpdated = resultToBeUpdated.substring(0, resultToBeUpdated.length() - 1);
         resultToBeUpdated += "";
-
 
         String update = "UPDATE " + getTableName() + "\n SET " + resultToBeUpdated + " \n WHERE `id`=" + id + ";";
         int rowsAffected = jdbcTemplate.update(update);

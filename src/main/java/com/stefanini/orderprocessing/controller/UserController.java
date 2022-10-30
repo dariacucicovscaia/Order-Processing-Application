@@ -27,8 +27,8 @@ public class UserController {
     }
 
     @PostMapping("/placeOrder/{userId}")
-    public Order placeOrder(@PathVariable int userId, @RequestBody Order order){
-        return userService.placeOrder(userId, order);
+    public String placeOrder(@PathVariable int userId, @RequestBody Order order){
+        return userService.placeOrder(userId, order).toString();
     }
 
     @PostMapping("/createUser")

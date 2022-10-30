@@ -6,23 +6,22 @@ public class User {
     private String name;
     private String address;
     private String email;
-    private boolean paymentDone;
+
 
     public User() {
     }
 
-    public User(String name,String address, String email, boolean paymentDone) {
+    public User(String name, String address, String email) {
         this.name = name;
         this.address = address;
         this.email = email;
-        this.paymentDone = paymentDone;
     }
 
-    public User(int id, String address, String email, boolean paymentDone) {
+    public User(int id, String name, String address, String email) {
         this.id = id;
+        this.name = name;
         this.address = address;
         this.email = email;
-        this.paymentDone = paymentDone;
     }
 
     public int getId() {
@@ -49,13 +48,7 @@ public class User {
         this.email = email;
     }
 
-    public boolean isPaymentDone() {
-        return paymentDone;
-    }
 
-    public void setPaymentDone(boolean paymentDone) {
-        this.paymentDone = paymentDone;
-    }
     public String getName() {
         return name;
     }

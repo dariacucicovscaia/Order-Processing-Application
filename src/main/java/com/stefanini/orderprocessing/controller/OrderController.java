@@ -36,4 +36,9 @@ public class OrderController {
     public Order changeOrderStatus(@PathVariable int orderId, @PathVariable String newStatus){
         return orderService.updateOrderStatus( orderId,newStatus);
     }
+
+    @PutMapping ("/pay/{orderId}")
+    public Order payOrder(@PathVariable int orderId){
+        return orderService.payOrder( orderId);
+    }
 }

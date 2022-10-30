@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OrderDAOImpl extends GenericDAOAbstractImpl<Order> implements OrderDAO<Order> {
     @Autowired
-    public OrderDAOImpl(JdbcTemplate jdbcTemplate, Environment environment) {
-        super(jdbcTemplate, environment);
+    public OrderDAOImpl(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
         setClazz(Order.class);
     }
 }

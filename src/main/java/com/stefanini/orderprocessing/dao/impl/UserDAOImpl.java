@@ -13,10 +13,10 @@ import java.util.List;
 
 @Repository
 public class UserDAOImpl extends GenericDAOAbstractImpl<User> implements UserDAO<User> {
-    @Autowired
-    public UserDAOImpl(JdbcTemplate jdbcTemplate, Environment environment) {
-        super(jdbcTemplate, environment);
+    public UserDAOImpl(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
         setClazz(User.class);
+
     }
     @Override
     public List<Order> getUsersOrders(int id){
