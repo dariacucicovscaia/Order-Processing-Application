@@ -3,6 +3,7 @@ package com.stefanini.orderprocessing.service.impl;
 import com.stefanini.orderprocessing.dao.OrderDAO;
 import com.stefanini.orderprocessing.dao.impl.OrderDAOImpl;
 import com.stefanini.orderprocessing.domain.Order;
+import com.stefanini.orderprocessing.email.MailSenderService;
 import com.stefanini.orderprocessing.service.OrderService;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,11 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderDAO<Order> orderDAO;
+    private final MailSenderService emailSenderService;
 
-    public OrderServiceImpl(OrderDAOImpl orderDAO) {
+    public OrderServiceImpl(OrderDAOImpl orderDAO, MailSenderService emailSenderService) {
         this.orderDAO = orderDAO;
+        this.emailSenderService = emailSenderService;
     }
 
     @Override
@@ -40,6 +43,12 @@ public class OrderServiceImpl implements OrderService {
     public Order updateOrderStatus(int orderId, String newStatus) {
         Order order = getOrderById(orderId);
         order.setStatus(newStatus);
+
+        String email = "Order's status has been changed\n\nOrder details:\n" + "Type: " + order.getType() + "\n"
+                + "Status: " + newStatus + "\n";
+        String subject = "Order Status Changed";
+
+        emailSenderService.sendMail(email, subject);
 
         return orderDAO.update(order ,orderId);
     }

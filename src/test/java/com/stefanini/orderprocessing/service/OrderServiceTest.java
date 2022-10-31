@@ -5,6 +5,7 @@ import com.stefanini.orderprocessing.dao.impl.OrderDAOImpl;
 import com.stefanini.orderprocessing.domain.Order;
 import com.stefanini.orderprocessing.domain.User;
 import com.stefanini.orderprocessing.domain.enums.OrderType;
+import com.stefanini.orderprocessing.email.MailSenderService;
 import com.stefanini.orderprocessing.service.impl.OrderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +26,13 @@ public class OrderServiceTest {
     @Mock
     private OrderDAO<Order> orderDAOTest;
     private OrderService orderServiceTest;
+    @Mock
+    private MailSenderService emailSenderService;
 
     @BeforeEach
     void setupService() {
         orderDAOTest = mock(OrderDAOImpl.class);
-        orderServiceTest = new OrderServiceImpl((OrderDAOImpl) orderDAOTest);
+        orderServiceTest = new OrderServiceImpl((OrderDAOImpl) orderDAOTest, emailSenderService);
     }
 
     @Test

@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
 
         String email = "New order has been initialized\n\nUsers details:\n" + "Name: " + user.getName() + "\n"
                 + "Email: " + user.getEmail() + "\n"
-                + "Address: " + user.getAddress() + "\n";
+                + "Address: " + user.getAddress() + "\n\n"
+                + "Order details:\n" + "Type: " +order.getType() +  "\nStatus: " +order.getStatus() + "\n";
         String subject = "New order";
 
         emailSenderService.sendMail(email, subject);
