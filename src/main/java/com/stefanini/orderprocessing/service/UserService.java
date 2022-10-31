@@ -40,4 +40,6 @@ public interface UserService {
      * @return - list of users orders
      */
     List<Order> getAllUserOrders(int id);
+
+    User getUserById(int id);
 }

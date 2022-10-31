@@ -1,18 +1,31 @@
 package com.stefanini.orderprocessing.dao.impl;
 
 import com.stefanini.orderprocessing.dao.IGenericDAO;
+import com.stefanini.orderprocessing.helper.DataBaseConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
-    protected final JdbcTemplate jdbcTemplate;
 
+public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
     private Class<T> entityClazz;
+
+    protected Statement getConnectionStatement() {
+        try {
+            return DataBaseConnection.getConnection().createStatement();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private Environment environment;
 
@@ -26,14 +39,13 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
     }
 
 
-    public GenericDAOAbstractImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-
     @Override
     public List<T> getAll() {
-        return jdbcTemplate.query("SELECT * FROM " + getTableName(), new BeanPropertyRowMapper<>(entityClazz));
+        Field fields[] = entityClazz.getDeclaredFields();
+        String sql = "SELECT *  FROM " + getTableName() + ";";
+        List<T> entityList = setFieldValues(fields, sql);
+
+        return entityList;
     }
 
 
@@ -59,56 +71,58 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         resultToBeUpdated += "";
 
         String update = "UPDATE " + getTableName() + "\n SET " + resultToBeUpdated + " \n WHERE `id`=" + id + ";";
-        int rowsAffected = jdbcTemplate.update(update);
-        if (rowsAffected == 0) {
-            return null;
-        } else {
+
+        try {
+             getConnectionStatement().executeUpdate(update);
             return entity;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public T create(T entity) {
-        Field[] fields = entityClazz.getDeclaredFields();
-
-        String insert = "INSERT INTO " + getTableName() + "\n " + getColumns(fields) + " \n"
-                + getValuesToInsert(fields, entity) + ";";
-
-        int fieldsChanged = jdbcTemplate.update(insert);
-
-        if (fieldsChanged == 0) {
-            return null;
-        } else {
+        Field fields[] = entityClazz.getDeclaredFields();
+        String insert = "INSERT INTO " + getTableName() + "\r\n" + getColumns(fields) + "\r\n" + getValuesToInsert(fields, entity);
+        System.out.println( getColumns(fields));
+        System.out.println(  getValuesToInsert(fields, entity));
+        try {
+            getConnectionStatement().executeUpdate(insert);
             return entity;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public T getById(int id) {
-        T entity = jdbcTemplate.query("SELECT * FROM " + getTableName() + "\nWHERE id=" + id, new BeanPropertyRowMapper<>(entityClazz))
-                .stream().findAny().orElse(null);
+        Field fields[] = entityClazz.getDeclaredFields();
+        String sql = "SELECT *  FROM " + getTableName() + " WHERE id=" + id + " ;";
+        List<T> entity = setFieldValues(fields, sql);
+
         if (entity.equals(null)) {
             return null;
         } else {
-            return entity;
+            return entity.get(0);
         }
     }
 
     @Override
     public int removeById(int id) {
-        int fieldsAffected = jdbcTemplate.update("DELETE FROM " + getTableName() + " WHERE id = " + id);
-        if (fieldsAffected == 0) {
-            return 0;
-        } else {
+        String sql = "DELETE FROM " + getTableName() + " \r\n 	WHERE id= " + id + " ;";
+
+        try {
+            getConnectionStatement().executeUpdate(sql);
             return id;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     private String getColumns(Field[] fields) {
         String columns = "(";
         for (Field field : fields) {
-            field.setAccessible(true);
-            columns += "`" + field.getName() + "`,";
+            columns += field.getName() + ",";
         }
         columns = columns.substring(0, columns.length() - 1);
         columns += ")";
@@ -119,20 +133,21 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
     private String getValuesToInsert(Field[] fields, T entity) {
         String values = "VALUES (";
         for (Field field : fields) {
+            field.setAccessible(true);
             try {
                 Object value = field.get(entity);
-                if (field.getType().getName().equals("java.lang.String") || field.getType().getName().equals("com.stefanini.orderprocessing.domain.enums.OrderType")) {
-                    values += "'" + value + "',";
-                } else {
+                if (field.getType().getName().equals("int")||field.getType().getName().equals("boolean") ) {
                     values += value + ",";
+                } else if (field.getType().getName().equals("java.lang.String") ||  field.getType().getName().equals("com.stefanini.orderprocessing.domain.enums.OrderType")) {
+                    values += "'" + value + "',";
                 }
+
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
         values = values.substring(0, values.length() - 1);
         values += ") ";
-
         return values;
     }
 
@@ -140,4 +155,39 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         return "`" + environment.getProperty("schema_name") + "`." + entityClazz.getSimpleName().toLowerCase();
     }
 
+    protected List<T> setFieldValues(Field[] fields, String sql) {
+        List<T> entityList = new ArrayList<T>();
+        T t = null;
+        try {
+            ResultSet result = getConnectionStatement().executeQuery(sql);
+
+            while (result.next()) {
+                Constructor constr = entityClazz.getConstructor();
+                t = (T) constr.newInstance();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    String fieldName = field.getName();
+                    Object fieldValue = result.getObject(fieldName);
+
+                    if (field.getType().isEnum()) {
+                        Method valueOf = field.getType().getMethod("valueOf", String.class);
+                        Object value = valueOf.invoke(null, fieldValue);
+                        field.set(t, value);
+                    } else if (field.getType().getName().equals("boolean")) {
+                        if (result.getObject(fieldName).equals(true)) {
+                            field.set(t, Boolean.TRUE);
+                        } else {
+                            field.set(t, Boolean.FALSE);
+                        }
+                    } else field.set(t, fieldValue);
+                }
+                entityList.add(t);
+            }
+        } catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException |
+                 InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            throw new RuntimeException(e);
+        }
+
+        return entityList;
+    }
 }

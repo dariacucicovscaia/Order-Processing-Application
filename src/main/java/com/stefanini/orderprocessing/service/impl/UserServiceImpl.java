@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
         return userDAO.getAll();
     }
 
+
     @Override
     public Order placeOrder(int userId, Order order) {
         User user = userDAO.getById(userId);
@@ -52,5 +53,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Order> getAllUserOrders(int id) {
         return userDAO.getUsersOrders(id);
+    }
+
+    @Override
+    public User getUserById(int id) {
+        return userDAO.getById(id);
     }
 }
