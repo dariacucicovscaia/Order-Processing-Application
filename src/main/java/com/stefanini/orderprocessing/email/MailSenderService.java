@@ -10,6 +10,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+
+/**
+ * Service for sending emails
+ */
 @Service
 public class MailSenderService {
     private final Environment environment;

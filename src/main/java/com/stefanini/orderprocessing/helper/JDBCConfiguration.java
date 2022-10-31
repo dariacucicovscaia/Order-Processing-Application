@@ -9,6 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
+/**
+ * Configuration for the connection to the database
+ */
 @Configuration
 @ComponentScan("com.stefanini.orderprocessing")
 public class JDBCConfiguration {
