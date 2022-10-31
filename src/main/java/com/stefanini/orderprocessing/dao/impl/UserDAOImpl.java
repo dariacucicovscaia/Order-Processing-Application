@@ -3,12 +3,10 @@ package com.stefanini.orderprocessing.dao.impl;
 import com.stefanini.orderprocessing.dao.UserDAO;
 import com.stefanini.orderprocessing.domain.Order;
 import com.stefanini.orderprocessing.domain.User;
+import com.stefanini.orderprocessing.domain.enums.OrderType;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,35 +23,23 @@ public class UserDAOImpl extends GenericDAOAbstractImpl<User> implements UserDAO
 
         Field fields[] = Order.class.getDeclaredFields();
         String sql = "SELECT *  FROM `order-processing`.order WHERE userId=" + id + " ;";
-        List<Order> orderList = new ArrayList<Order>();
-        Order order = null;
+        List<Order> orderList = new ArrayList<>();
+
         try {
             ResultSet result = getConnectionStatement().executeQuery(sql);
 
             while (result.next()) {
-                Constructor constr = Order.class.getConstructor();
-                order = (Order) constr.newInstance();
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    String fieldName = field.getName();
-                    Object fieldValue = result.getObject(fieldName);
+                Order order = new Order();
 
-                    if (field.getType().isEnum()) {
-                        Method valueOf = field.getType().getMethod("valueOf", String.class);
-                        Object value = valueOf.invoke(null, fieldValue);
-                        field.set(order, value);
-                    } else if (field.getType().getName().equals("boolean")) {
-                        if (result.getObject(fieldName).equals(true)) {
-                            field.set(order, Boolean.TRUE);
-                        } else {
-                            field.set(order, Boolean.FALSE);
-                        }
-                    } else field.set(order, fieldValue);
-                }
+                order.setId(result.getInt("id"));
+                order.setStatus(result.getString("status"));
+                order.setType(OrderType.valueOf(result.getString("type")));
+                order.setPaid(result.getBoolean("isPaid"));
+                order.setUserId(result.getInt("userId"));
+
                 orderList.add(order);
             }
-        } catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException |
-                 InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (SQLException | IllegalArgumentException | SecurityException e) {
             throw new RuntimeException(e);
         }
 
