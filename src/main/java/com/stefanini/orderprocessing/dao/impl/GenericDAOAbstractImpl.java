@@ -58,10 +58,10 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
             field.setAccessible(true);
             try {
                 Object value = field.get(entity);
-                if (field.getType().getName().equals("java.lang.String") || field.getType().getName().equals("com.stefanini.orderprocessing.domain.enums.OrderType")) {
-                    resultToBeUpdated += "`" + field.getName() + "` = '" + value + "',";
-                } else {
+                if (field.getType().getName().equals("int") || field.getType().getName().equals("boolean")) {
                     resultToBeUpdated += "`" + field.getName() + "` = " + value + ",";
+                } else {
+                    resultToBeUpdated += "`" + field.getName() + "` = '" + value + "',";
                 }
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -73,7 +73,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         String update = "UPDATE " + getTableName() + "\n SET " + resultToBeUpdated + " \n WHERE `id`=" + id + ";";
 
         try {
-             getConnectionStatement().executeUpdate(update);
+            getConnectionStatement().executeUpdate(update);
             return entity;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -84,8 +84,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
     public T create(T entity) {
         Field fields[] = entityClazz.getDeclaredFields();
         String insert = "INSERT INTO " + getTableName() + "\r\n" + getColumns(fields) + "\r\n" + getValuesToInsert(fields, entity);
-        System.out.println( getColumns(fields));
-        System.out.println(  getValuesToInsert(fields, entity));
+
         try {
             getConnectionStatement().executeUpdate(insert);
             return entity;
@@ -136,9 +135,11 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
             field.setAccessible(true);
             try {
                 Object value = field.get(entity);
-                if (field.getType().getName().equals("int")||field.getType().getName().equals("boolean") ) {
+                if (field.getType().getName().equals("int") || field.getType().getName().equals("boolean")) {
                     values += value + ",";
-                } else if (field.getType().getName().equals("java.lang.String") ||  field.getType().getName().equals("com.stefanini.orderprocessing.domain.enums.OrderType")) {
+                } else if (field.getType().getName().equals("java.lang.String")) {
+                    values += "'" + value + "',";
+                } else {
                     values += "'" + value + "',";
                 }
 
