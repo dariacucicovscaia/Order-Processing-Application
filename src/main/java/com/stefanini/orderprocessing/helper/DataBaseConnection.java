@@ -15,6 +15,7 @@ public class DataBaseConnection  extends ReadProps{
     static {
         String propertiesFilename = "application.properties";
         Properties properties = new DataBaseConnection().loadProperties(propertiesFilename);
+
         String url =properties.getProperty("SPRING_DATASOURCE_URL");
         String root = properties.getProperty("SPRING_DATASOURCE_USERNAME");
         String password = properties.getProperty("SPRING_DATASOURCE_PASSWORD");

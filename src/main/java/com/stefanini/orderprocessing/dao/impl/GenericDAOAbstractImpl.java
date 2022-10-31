@@ -41,9 +41,8 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
 
     @Override
     public List<T> getAll() {
-        Field fields[] = entityClazz.getDeclaredFields();
         String sql = "SELECT *  FROM " + getTableName() + ";";
-        List<T> entityList = setFieldValues(fields, sql);
+        List<T> entityList = setFieldValues( sql);
 
         return entityList;
     }
@@ -82,8 +81,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
 
     @Override
     public T create(T entity) {
-        Field fields[] = entityClazz.getDeclaredFields();
-        String insert = "INSERT INTO " + getTableName() + "\r\n" + getColumns(fields) + "\r\n" + getValuesToInsert(fields, entity);
+        String insert = "INSERT INTO " + getTableName() + "\r\n" + getColumns() + "\r\n" + getValuesToInsert(entity);
 
         try {
             getConnectionStatement().executeUpdate(insert);
@@ -95,12 +93,11 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
 
     @Override
     public T getById(int id) {
-        Field fields[] = entityClazz.getDeclaredFields();
         String sql = "SELECT *  FROM " + getTableName() + " WHERE id=" + id + " ;";
-        List<T> entity = setFieldValues(fields, sql);
+        List<T> entity = setFieldValues(sql);
 
-        if (entity.equals(null)) {
-            return null;
+        if (entity.size() < 1) {
+            throw new RuntimeException(new NullPointerException());
         } else {
             return entity.get(0);
         }
@@ -118,7 +115,9 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         }
     }
 
-    private String getColumns(Field[] fields) {
+    private String getColumns() {
+        Field fields[] = entityClazz.getDeclaredFields();
+
         String columns = "(";
         for (Field field : fields) {
             columns += field.getName() + ",";
@@ -126,10 +125,12 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         columns = columns.substring(0, columns.length() - 1);
         columns += ")";
 
+        // (id,name,address,email)
         return columns;
     }
 
-    private String getValuesToInsert(Field[] fields, T entity) {
+    private String getValuesToInsert(T entity) {
+        Field fields[] = entityClazz.getDeclaredFields();
         String values = "VALUES (";
         for (Field field : fields) {
             field.setAccessible(true);
@@ -149,6 +150,8 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         }
         values = values.substring(0, values.length() - 1);
         values += ") ";
+
+        // VALUES (0,'Anton','mariaBiesu str 34','anton33@gmail.com')
         return values;
     }
 
@@ -156,7 +159,8 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         return "`" + environment.getProperty("schema_name") + "`." + entityClazz.getSimpleName().toLowerCase();
     }
 
-    protected List<T> setFieldValues(Field[] fields, String sql) {
+    private List<T> setFieldValues(String sql) {
+        Field fields[] = entityClazz.getDeclaredFields();
         List<T> entityList = new ArrayList<T>();
         T t = null;
         try {
@@ -175,7 +179,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
                         Object value = valueOf.invoke(null, fieldValue);
                         field.set(t, value);
                     } else if (field.getType().getName().equals("boolean")) {
-                        if (result.getObject(fieldName).equals(true)) {
+                        if (fieldValue.equals(true)) {
                             field.set(t, Boolean.TRUE);
                         } else {
                             field.set(t, Boolean.FALSE);
