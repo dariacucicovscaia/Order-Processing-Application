@@ -54,8 +54,8 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
 
         String resultToBeUpdated = "";
         for (Field field : fields) {
-            field.setAccessible(true);
             try {
+                field.setAccessible(true);
                 Object value = field.get(entity);
                 if (field.getType().getName().equals("int") || field.getType().getName().equals("boolean")) {
                     resultToBeUpdated += "`" + field.getName() + "` = " + value + ",";
@@ -67,7 +67,6 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
             }
         }
         resultToBeUpdated = resultToBeUpdated.substring(0, resultToBeUpdated.length() - 1);
-        resultToBeUpdated += "";
 
         String update = "UPDATE " + getTableName() + "\n SET " + resultToBeUpdated + " \n WHERE `id`=" + id + ";";
 
@@ -138,7 +137,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
                 Object value = field.get(entity);
                 if (field.getType().getName().equals("int") || field.getType().getName().equals("boolean")) {
                     values += value + ",";
-                }else {
+                } else {
                     values += "'" + value + "',";
                 }
             } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -148,7 +147,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
         values = values.substring(0, values.length() - 1);
         values += ") ";
 
-        // VALUES (0,'Anton','mariaBiesu str 34','anton33@gmail.com')
+        // VALUES (0,'Anton','mariaBiesu str 34','anton33@gmail.com', 1, 2)
         return values;
     }
 

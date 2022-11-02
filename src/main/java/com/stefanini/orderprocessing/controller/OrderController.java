@@ -17,28 +17,28 @@ public class OrderController {
     }
 
     @GetMapping("/orders")
-    public List<Order> getAllOrders(){
+    public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
 
     @DeleteMapping("/{id}")
-    public int deleteOrder( @PathVariable int id){
+    public int deleteOrder(@PathVariable int id) {
         return orderService.deleteOrder(id);
     }
 
     @GetMapping("/{id}")
-    public Order getOrderById( @PathVariable int id){
+    public Order getOrderById(@PathVariable int id) {
         return orderService.getOrderById(id);
     }
 
 
-    @PutMapping ("/{orderId}/{newStatus}")
-    public Order changeOrderStatus(@PathVariable int orderId, @PathVariable String newStatus){
-        return orderService.updateOrderStatus( orderId,newStatus);
+    @PutMapping("/{orderId}/{newStatus}")
+    public Order changeOrderStatus(@PathVariable int orderId, @PathVariable String newStatus) {
+        return orderService.updateOrderStatus(orderId, newStatus);
     }
 
-    @PutMapping ("/pay/{orderId}")
-    public Order payOrder(@PathVariable int orderId){
-        return orderService.payOrder( orderId);
+    @PutMapping("/pay/{orderId}")
+    public Order payOrder(@PathVariable int orderId) {
+        return orderService.payOrder(orderId);
     }
 }
