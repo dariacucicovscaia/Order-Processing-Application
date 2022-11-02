@@ -67,23 +67,24 @@ public class Order {
         this.type = type;
     }
 
-    public boolean isPaid() {
+    public boolean getIsPaid() {
         return isPaid;
     }
-
-    public void setPaid(boolean paid) {
-        isPaid = paid;
+    public void setIsPaid(boolean isPaid) {
+        this.isPaid = isPaid;
     }
 
     public Order markPaid() {
         isPaid = true;
         return this;
     }
+
     @Override
     public String toString() {
         return "Order{" +
                 "status='" + status + '\'' +
                 ", type=" + type +
+                ", isPaid=" + isPaid +
                 ", userId=" + userId +
                 '}';
     }

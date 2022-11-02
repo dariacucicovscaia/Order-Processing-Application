@@ -42,7 +42,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
     @Override
     public List<T> getAll() {
         String sql = "SELECT *  FROM " + getTableName() + ";";
-        List<T> entityList = setFieldValues( sql);
+        List<T> entityList = setFieldValues(sql);
 
         return entityList;
     }
@@ -138,12 +138,9 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
                 Object value = field.get(entity);
                 if (field.getType().getName().equals("int") || field.getType().getName().equals("boolean")) {
                     values += value + ",";
-                } else if (field.getType().getName().equals("java.lang.String")) {
-                    values += "'" + value + "',";
-                } else {
+                }else {
                     values += "'" + value + "',";
                 }
-
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -179,7 +176,7 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
                         Object value = valueOf.invoke(null, fieldValue);
                         field.set(t, value);
                     } else if (field.getType().getName().equals("boolean")) {
-                        if (fieldValue.equals(true)) {
+                        if (fieldValue.equals(1)) {
                             field.set(t, Boolean.TRUE);
                         } else {
                             field.set(t, Boolean.FALSE);

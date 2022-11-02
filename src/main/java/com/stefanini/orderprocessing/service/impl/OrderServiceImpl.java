@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order payOrder(int orderId) {
         Order order = getOrderById(orderId);
-        order.setPaid(true);
+        order.setIsPaid(true);
 
         return orderDAO.update(order ,orderId);
     }

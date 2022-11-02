@@ -31,7 +31,7 @@ public class UserDAOImpl extends GenericDAOAbstractImpl<User> implements UserDAO
                 order.setId(result.getInt("id"));
                 order.setStatus(result.getString("status"));
                 order.setType(OrderType.valueOf(result.getString("type")));
-                order.setPaid(result.getBoolean("isPaid"));
+                order.setIsPaid(result.getBoolean("isPaid"));
                 order.setUserId(result.getInt("userId"));
 
                 orderList.add(order);
