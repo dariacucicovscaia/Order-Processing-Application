@@ -6,7 +6,6 @@ import com.stefanini.orderprocessing.domain.User;
 import com.stefanini.orderprocessing.domain.enums.OrderType;
 import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
