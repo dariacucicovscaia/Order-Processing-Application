@@ -161,11 +161,11 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
 
     private List<T> setFieldValues(String sql) {
         Field fields[] = entityClazz.getDeclaredFields();
-        List<T> entityList = new ArrayList<T>();
-        T t = null;
+
         try {
             ResultSet result = getConnectionStatement().executeQuery(sql);
-
+            List<T> entityList = new ArrayList<>();
+            T t = null;
             while (result.next()) {
                 Constructor constr = entityClazz.getConstructor();
                 t = (T) constr.newInstance();
@@ -188,11 +188,11 @@ public abstract class GenericDAOAbstractImpl<T> implements IGenericDAO<T> {
                 }
                 entityList.add(t);
             }
+
+            return entityList;
         } catch (SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException |
                  InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new RuntimeException(e);
         }
-
-        return entityList;
     }
 }

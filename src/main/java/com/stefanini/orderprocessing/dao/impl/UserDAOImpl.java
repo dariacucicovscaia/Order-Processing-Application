@@ -20,13 +20,11 @@ public class UserDAOImpl extends GenericDAOAbstractImpl<User> implements UserDAO
 
     @Override
     public List<Order> getUsersOrders(int id) {
-
-        Field fields[] = Order.class.getDeclaredFields();
         String sql = "SELECT *  FROM `order-processing`.order WHERE userId=" + id + " ;";
-        List<Order> orderList = new ArrayList<>();
 
         try {
             ResultSet result = getConnectionStatement().executeQuery(sql);
+            List<Order> orderList = new ArrayList<>();
 
             while (result.next()) {
                 Order order = new Order();
@@ -39,10 +37,10 @@ public class UserDAOImpl extends GenericDAOAbstractImpl<User> implements UserDAO
 
                 orderList.add(order);
             }
+
+            return orderList;
         } catch (SQLException | IllegalArgumentException | SecurityException e) {
             throw new RuntimeException(e);
         }
-
-        return orderList;
     }
 }
